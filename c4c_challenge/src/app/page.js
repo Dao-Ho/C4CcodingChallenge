@@ -1,38 +1,70 @@
-export default function Home() {
+"use client";
+import { useEffect, useState } from "react";
+import { createClient } from "@supabase/supabase-js";
 
+export default function Home() {
   //initalize const
-  const [partnerName, setPartnerName] = useState('');
-  const [partnerBio, setPartnerBio] = useState('');
+  const [partnerName, setPartnerName] = useState("");
+  const [partnerBio, setPartnerBio] = useState("");
   const [partnerLogo, setPartnerLogo] = useState(null);
+
+  const [fetchedPartnerData, setfetchedPartnerData] = useState(null);
 
   //supabase key: normally, this would be in an .env file and used as a variable/const, but for ease of access, it is directly delcared here:
   const supabaseUrl = "https://uwsapftobgquvcuawblq.supabase.co";
   const supabaseKey =
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV3c2FwZnRvYmdxdXZjdWF3YmxxIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTcxODMyNzExMiwiZXhwIjoyMDMzOTAzMTEyfQ.ksRFbR54gf70ZzPk-N-_ih7aVyKQ7ZoxfUsNao3Ya-w";
- 
-    const supabase = createClient(supabaseUrl, supabaseKey);
 
-    useEffect(() => {
-      // Fetch data from Supabase when the component mounts
-      fetchPartnersFromSupabase();
-    }, []);
+  const supabase = createClient(supabaseUrl, supabaseKey);
 
+  /**
+   * method to fetch all data in our supabase table
+   */
+  const fetchPartnerDataFromSupabase = async () => {
+    try {
+      const { data, error } = await supabase.from("partners").select("*");
+      console.log("Fetched data:", data); // Log the fetched data
+      if (error) {
+        console.error("Error fetching partner names from Supabase:", error);
+      } else {
+        setfetchedPartnerData(data);
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  //perform the following when the page loads/initialize
+  useEffect(() => {
+    // fetch all partners data from previous operations
+    fetchPartnerDataFromSupabase();
+  }, []);
 
   //function when submitted
   const handleSubmit = async (e) => {
+    console.log("button clicked");
     e.preventDefault();
 
     if (!partnerLogo) {
-      alert('No logo selected!');
-      return;
+      alert("No logo selected!");
+
+      if (!partnerName) {
+        alert("No name given");
+      }
+
+      if (!partnerBio) {
+        alert("No bio given");
+      }
     }
 
     //base 64 encoding of image:
     const reader = new FileReader();
     reader.readAsDataURL(partnerLogo);
-
-
-
+    reader.onloadend = async () => {
+      const convertedImage = reader.result;
+      console.log(convertedImage);
+    };
+  };
   return (
     <main className="flex h-[100vh] w-[100vw] bg-[#f4f4f4] text-[#393939]">
       <div className="bg-[#f4f4f4] w-[70vw] h-[100vh]"></div>
@@ -77,7 +109,10 @@ export default function Home() {
                 />
               </div>
             </div>
-            <button type="submit" className="
+            <button
+              type="submit"
+              onSubmit={(e) => handleSubmit}
+              className="
                   mt-[3vh]
                   h-[5vh]
                   w-[10vw]
@@ -87,8 +122,10 @@ export default function Home() {
                   hover:border-[0.2vw]
                   rounded-[0.5vw]
                   hover:cursor-pointer hover:bg-[#ffffff]
-                  hover:text-[#393939]">Submit
-                  </button>
+                  hover:text-[#393939]"
+            >
+              Submit
+            </button>
           </div>
         </form>
       </div>
