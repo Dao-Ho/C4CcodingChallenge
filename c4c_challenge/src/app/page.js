@@ -6,6 +6,7 @@ export default function Home() {
   //initalize const
   const [partnerName, setPartnerName] = useState("");
   const [partnerBio, setPartnerBio] = useState("");
+  const [isActive, setIsActive] = useState(0);
   const [partnerLogo, setPartnerLogo] = useState(null);
 
   const [fetchedPartnerData, setfetchedPartnerData] = useState([]);
@@ -31,6 +32,19 @@ export default function Home() {
       }
     } catch (error) {
       console.error("Error fetching data:", error);
+    }
+  };
+
+  const deletePartner = async (partnerId) => {
+    try {
+      const {} = await supabase
+        .from("partners")
+        .delete()
+        .eq("partnerId", partnerId);
+      console.log("deleted partner data");
+      fetchPartnerDataFromSupabase(); // Fetch updated data after deletion
+    } catch (error) {
+      console.error("Error deleting partner:", error.message);
     }
   };
 
@@ -74,8 +88,11 @@ export default function Home() {
               partnerName: partnerName,
               partnerBio: partnerBio,
               partnerLogo: convertedImage,
+              isActive: isActive,
             },
           ]);
+          // Fetch the updated data
+          fetchPartnerDataFromSupabase();
           //catch error message
           if (error) {
             console.log("error uploading data to db: " + error);
@@ -87,15 +104,12 @@ export default function Home() {
     } catch (error) {
       console.log(error);
     }
-
-    // Fetch the updated data
-    fetchPartnerDataFromSupabase();
   };
 
   return (
     <main className="flex w-[100vw] bg-[#f4f4f4] text-[#393939] overflow-scroll">
-      <div className=" w-[70vw]">
-        <div className="flex flex-col justify-center">
+      <div className=" w-[70vw] bg-[#f4f4f4] h-[100vh]">
+        <div className="flex flex-col justify-center bg-[#f4f4f4]">
           <div className="flex w-full h-[13vh] items-center ml-[1.5vw]">
             <img
               src="https://c4cneu-public.s3.us-east-2.amazonaws.com/Site/C4C_Icon_Gradient.png"
@@ -105,26 +119,49 @@ export default function Home() {
           </div>
           <div className="flex flex-wrap w-[70vw] y-overflow">
             {fetchedPartnerData.map((partner) => (
-              <div key={partner.partnerId} className="flex w-[30vw] h-[35vh] justify-center flex-col mx-[2vw] my-[3vh]">
+              <div
+                key={partner.partnerId}
+                className="flex w-[30vw] h-[40vh] justify-center flex-col mx-[2vw] my-[3vh]"
+              >
                 <div className="] w-[30vw] h-[3vh]">
                   <h2 className="text-xl font-bold">{partner.partnerName}</h2>
                 </div>
-                <div className="w-[30vw] h-[15vh] mt-[2vh]">
+                <div className="w-[32vw] h-[15vh] mt-[1vh]">
                   <p className="text-gray-700 mt-2">{partner.partnerBio}</p>
                 </div>
-                <div className="w-[30vw] h-[2vh]">
-                {partner.isActive == 1 ? <h1>Active</h1> : <h1>Inactive</h1>}
+                <div className="flex w-[30vw] h-[3vh] my-[1vh] flex-row">
+                  {partner.isActive == 1 ? (
+                    <h1 className="text-[#9daf89] font-semibold"> Active</h1>
+                  ) : (
+                    <h1 className="text-[#ff7f7f] font-semibold">Inactive</h1>
+                  )}
+                  <button
+                    onClick={() => deletePartner(partner.partnerId)}
+                    className="
+                  ml-[2vw]
+                  h-[3vh]
+                  w-[5vw]
+                  font-small
+                  bg-[#393939] text-[#ffffff]
+                  hover:border-[#393939]
+                  hover:border-[0.2vw]
+                  rounded-[0.5vw]
+                  hover:cursor-pointer hover:bg-[#ffffff]
+                  hover:text-[#393939]"
+                  >
+                    delete
+                  </button>
                 </div>
-                <div className="w-[30vw] h-[15vh]">
+                <div className="w-[30vw] h-[15vh] mt-[1vh]">
                   <img
                     src={partner.partnerLogo}
                     alt={partner.partnerName}
-                    className="mt-4 h-[15vh] w-[30vw]"
+                    className="object cover x-auto h-full"
                   />
                 </div>
               </div>
             ))}
-        </div>
+          </div>
         </div>
       </div>
       <div className="flex bg-[#fcfcfc] w-[30vw] h-[100vh] rounded-tl-[2vw] rounded-bl-[2vw] items-center justify-center flex-col translate-x-[70vw] fixed">
@@ -153,6 +190,23 @@ export default function Home() {
                   placeholder="Partner Bio"
                   onChange={(e) => setPartnerBio(e.target.value)}
                 />
+              </div>
+              <div className="mt-[2vh]">
+                <div class="flex items-center mb-4">
+                  <input
+                    id="default-checkbox"
+                    onChange={(e) => setIsActive(e.target.checked ? 1 : 0)}
+                    type="checkbox"
+                    value="1"
+                    class="w-[1vw] h-[1vw] text-[#f4f4f4] bg-gray-100 border-gray-300 rounded active:bg-[#393939] focus:ring-[#393939] dark:focus:ring-[#f4f4f4] focus:ring-2 dark:bg-[#f4f4f4] dark:border-gray-600"
+                  />
+                  <label
+                    for="default-checkbox"
+                    class="ms-2 text-sm font-bold text-[#393939]"
+                  >
+                    Active
+                  </label>
+                </div>
               </div>
               <div>
                 <h1 className="font-bold text-[1vw] mt-[2vh]">Partner Logo</h1>
