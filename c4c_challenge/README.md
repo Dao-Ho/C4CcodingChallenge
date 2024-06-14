@@ -5,8 +5,8 @@ How to run the application:
 1. cd to the c4c_challenge repo
 
 2. install necessary components:
-npm install
-npm install -D tailwindcss (may not be needed)
+npm install,
+npm install -D tailwindcss (may not be needed),
 npm install @supabase/supabase-js
 
 
