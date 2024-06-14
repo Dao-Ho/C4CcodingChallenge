@@ -28,4 +28,6 @@ Overall, I am really proud of how the web app turned out. However, there are som
         I hope to explore and experiment with on my next web application project.
     - Device responsiveness: due to time constraints I was not able to refactor my screen responsiveness for mobile devices. 
 
-However, through this challenge, I've got to learn alot about querying and post to certain columns of a superbase relation. All of my supabase data that I've worked with in the past has primarily been storing one-attribute, therefore I never had to query or set data for a specific column. This project also allowed me to explore different design techniques that can be used on a UI (such as the side bar for posting partner data rather than my usual horizontal form) which I am very grateful to have the opportunity to do.
+However, through this challenge, I've got to learn alot about querying and post to certain columns of a superbase relation. All of my supabase data that I've worked with in the past has primarily been storing one-attribute, therefore I never had to query or set data for a specific column. This project also allowed me to explore different design techniques that can be used on a UI (such as the side bar for posting partner data rather than my usual horizontal form) which I am very grateful to have the opportunity to do. 
+
+Thank you for your time in reviewing this web application! 
